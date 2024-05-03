@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Body() {
@@ -6,7 +6,6 @@ export default function Body() {
 
   // Function to handle the change in muscle group selection
   const setMuscleId = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    // Retrieve the selected value from the event object
     const muscleId = event.target.value;
     setSelectedMuscleId(muscleId);
   };
@@ -14,7 +13,7 @@ export default function Body() {
   const api = `https://api.api-ninjas.com/v1/exercises?muscle=${selectedMuscleId}`;
 
   const muscleChosen = useQuery({
-    queryKey: ["muscles", selectedMuscleId], // Include selectedMuscleId in the query key
+    queryKey: ["muscles", selectedMuscleId],
     queryFn: () =>
       fetch(api, {
         headers: {
@@ -22,13 +21,8 @@ export default function Body() {
             "KUc+q0X66WPn3c4NMr/31w==BdOHU969D6gAJHvC" /* change this so its private */,
         },
       }).then((res) => res.json()),
-    enabled: selectedMuscleId !== "", // Enable the query only if a muscle is selected
+    enabled: selectedMuscleId !== "",
   });
-
-  // Use useEffect to refetch data whenever selectedMuscleId changes
-  useEffect(() => {
-    muscleChosen.refetch();
-  }, [selectedMuscleId]);
 
   return (
     <>
@@ -60,21 +54,38 @@ export default function Body() {
         </select>
       </div>
 
-      {selectedMuscleId && ( // Only render if selectedMuscleId is not empty
-        <div className="flex flex-col align-middle items-center  pt-10 bg-stone-900 text-white">
-          {/* Display the data fetched from the API */}
+      {selectedMuscleId && (
+        <div className="flex flex-col align-middle items-center pt-10 bg-stone-900 text-white">
           {muscleChosen.isLoading && <p>Loading...</p>}
           {muscleChosen.isError && <p>Error fetching data</p>}
           {muscleChosen.isSuccess && (
             <>
               <h1 className="pb-4">EXERCISES FOR MUSCLE GROUP</h1>
-              <ul className="">
+              <div className="flex flex-col justify-center items-center gap-5">
                 {muscleChosen.data.map((result: any) => (
-                  <li className="list-disc" key={result.id}>
-                    {result.name}
-                  </li>
+                  <div
+                    key={result.id}
+                    className="bg-slate-300 p-4 w-10/12 text-black flex justify-between"
+                    onClick={() => window.alert(result.instructions)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div>
+                      <h2 className="font-bold">{result.name}</h2>
+                      <p>
+                        <strong>Equipment:</strong> {result.equipment}
+                      </p>
+                      <p>
+                        <strong>Difficulty:</strong> {result.difficulty}
+                      </p>
+                      <p>
+                        <strong className="text-blue-300">
+                          Click for Instructions
+                        </strong>
+                      </p>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </>
           )}
         </div>

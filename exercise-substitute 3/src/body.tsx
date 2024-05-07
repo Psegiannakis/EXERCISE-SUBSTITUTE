@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+
+interface Exercise {
+  id: string;
+  name: string;
+  equipment: string;
+  difficulty: string;
+  instructions: string;
+}
 
 export default function Body() {
   const [selectedMuscleId, setSelectedMuscleId] = useState("");
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
+    null
+  );
 
   // Function to handle the change in muscle group selection
   const setMuscleId = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const muscleId = event.target.value;
     setSelectedMuscleId(muscleId);
+    setSelectedExercise(null); // Reset selected exercise when muscle changes
   };
 
   const api = `https://api.api-ninjas.com/v1/exercises?muscle=${selectedMuscleId}`;
@@ -24,9 +36,26 @@ export default function Body() {
     enabled: selectedMuscleId !== "",
   });
 
+  function handleClick(result: Exercise) {
+    setSelectedExercise(result);
+  }
+
+  useEffect(() => {
+    if (selectedExercise) {
+      scroll("instructions");
+    }
+  }, [selectedExercise]);
+
+  const scroll = (className: string) => {
+    const sections = document.getElementsByClassName(className);
+    if (sections.length > 0) {
+      sections[0].scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <>
-      <div className="flex justify-center pt-10 bg-stone-900">
+      <div className=" flex justify-center pt-10 bg-stone-900">
         <select
           className="w-60 bg-sky-800 rounded h-8 text-white text-center font-sans"
           name="muscle"
@@ -53,11 +82,11 @@ export default function Body() {
           <option value="triceps">triceps</option>
         </select>
       </div>
-
       {selectedMuscleId && (
         <div className="flex flex-col align-middle items-center pt-10 bg-stone-900 text-white">
           {muscleChosen.isLoading && (
             <div role="status">
+              {" "}
               <svg
                 aria-hidden="true"
                 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -74,18 +103,17 @@ export default function Body() {
                   fill="currentFill"
                 />
               </svg>
-              <span className="sr-only">Loading...</span>
             </div>
           )}
           {muscleChosen.isError && <p>Error fetching data</p>}
           {muscleChosen.isSuccess && (
             <>
               <h1 className="pb-4">EXERCISES FOR MUSCLE GROUP</h1>
-              <div className="grid grid-cols-5 grid-rows-2 w-11/12 min-h-[31rem] gap-5 ">
-                {muscleChosen.data.map((result: any) => (
+              <div className="grid grid-cols-5 grid-rows-2 w-11/12 min-h-[31rem] gap-5  ">
+                {muscleChosen.data.map((result: Exercise) => (
                   <div
                     key={result.id}
-                    className="bg-slate-300 p-4 text-black relative"
+                    className={`bg-slate-300 p-4 text-black relative rounded border-4 outline-1 hover:shadow-[1px_1px_7px_5px_#718096,-3px_3px_40px_5px_#7f9cf5] hover:shadow-cyan-900 hover:transition`}
                   >
                     <div className="">
                       <h2 className="font-bold text-center text-lg mb-3">
@@ -97,8 +125,10 @@ export default function Body() {
                       <p>
                         <strong>Difficulty:</strong> {result.difficulty}
                       </p>
-                      <p className=" absolute bottom-4 m-4   text-neutral-600 p-1 rounded bg-slate-200 hover:bg-cyan-700 hover:text-white hover:scale-110 duration-300 text-center hover:cursor-pointer">
-                        <strong>Click for Instructions</strong>
+                      <p className=" absolute bottom-4 m-4   text-black/65 p-1 rounded bg-slate-200 hover:bg-cyan-700 hover:text-white hover:scale-110 duration-300 text-center hover:cursor-pointer">
+                        <strong onClick={() => handleClick(result)}>
+                          Click for Instructions
+                        </strong>
                       </p>
                     </div>
                   </div>
@@ -106,6 +136,42 @@ export default function Body() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* Display selected exercise data */}
+      {selectedExercise && (
+        <div className="relative flex flex-col align-middle items-center pt-10 bg-stone-900 text-white">
+          <h1 className="py-8">SELECTED EXERCISE</h1>
+          <div className=" h-80 bg-slate-300 p-4 text-black">
+            <h2 className="font-bold text-center text-lg mb-6">
+              {selectedExercise.name}
+            </h2>
+
+            <p className="instructions">
+              <strong>Instructions:</strong> {selectedExercise.instructions}
+              <button
+                onClick={() => scroll("select")}
+                type="button"
+                className="absolute bottom-0 right-0 m-4 text-white bg-sky-800 hover:bg-sky-900 rounded-full p-2.5 hover:scale-110 hover:transition"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-arrow-up"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"
+                  />
+                </svg>
+                <span className="sr-only">Icon description</span>
+              </button>
+            </p>
+          </div>
         </div>
       )}
     </>

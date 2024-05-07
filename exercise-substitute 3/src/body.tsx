@@ -29,8 +29,7 @@ export default function Body() {
     queryFn: () =>
       fetch(api, {
         headers: {
-          "X-Api-Key":
-            "KUc+q0X66WPn3c4NMr/31w==BdOHU969D6gAJHvC" /* change this so its private */,
+          "X-Api-Key": import.meta.env.VITE_API_KEY,
         },
       }).then((res) => res.json()),
     enabled: selectedMuscleId !== "",
@@ -141,9 +140,9 @@ export default function Body() {
 
       {/* Display selected exercise data */}
       {selectedExercise && (
-        <div className="relative flex flex-col align-middle items-center pt-10 bg-stone-900 text-white">
+        <div className="relative flex flex-col align-middle items-center pt-10  bg-stone-900 text-white">
           <h1 className="py-8">SELECTED EXERCISE</h1>
-          <div className=" h-80 bg-slate-300 p-4 text-black">
+          <div className=" min-h-80 bg-slate-300 p-4 text-black max-h-content">
             <h2 className="font-bold text-center text-lg mb-6">
               {selectedExercise.name}
             </h2>
@@ -153,7 +152,7 @@ export default function Body() {
               <button
                 onClick={() => scroll("select")}
                 type="button"
-                className="absolute bottom-0 right-0 m-4 text-white bg-sky-800 hover:bg-sky-900 rounded-full p-2.5 hover:scale-110 hover:transition"
+                className="absolute bottom-0 right-0 m-4 bg-transparent/30 text-white bg-sky-800 hover:bg-sky-900 rounded-full p-2.5 hover:scale-110 hover:transition"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

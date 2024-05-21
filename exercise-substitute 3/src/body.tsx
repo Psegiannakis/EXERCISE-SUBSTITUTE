@@ -108,14 +108,14 @@ export default function Body() {
           {muscleChosen.isSuccess && (
             <>
               <h1 className="pb-4">EXERCISES FOR MUSCLE GROUP</h1>
-              <div className="grid grid-cols-5 grid-rows-2 w-11/12 min-h-[31rem] gap-5  ">
+              <div className="min-h-[30rem] w-10/12 grid grid-rows-10 grid-cols-1   gap-1 md:grid-cols-5 md:grid-rows-2 md:w-11/12 md:min-h-[31rem] md:gap-5  ">
                 {muscleChosen.data.map((result: Exercise) => (
                   <div
                     key={result.id}
                     className={`bg-slate-300 p-4 text-black relative rounded border-4 outline-1 hover:shadow-[1px_1px_7px_5px_#718096,-3px_3px_40px_5px_#7f9cf5] hover:shadow-cyan-900 hover:transition`}
                   >
                     <div className="">
-                      <h2 className="font-bold text-center text-lg mb-3">
+                      <h2 className="font-bold text-center text-md md:text-lg mb-3">
                         {result.name}
                       </h2>
                       <p className="">
@@ -124,7 +124,7 @@ export default function Body() {
                       <p>
                         <strong>Difficulty:</strong> {result.difficulty}
                       </p>
-                      <p className=" absolute bottom-4 m-4   text-black/65 p-1 rounded bg-slate-200 hover:bg-cyan-700 hover:text-white hover:scale-110 duration-300 text-center hover:cursor-pointer">
+                      <p className=" md:absolute  md:bottom-4 m-4   text-black/65 p-1 rounded bg-slate-200 hover:bg-cyan-700 hover:text-white hover:scale-110 duration-300 text-center hover:cursor-pointer">
                         <strong onClick={() => handleClick(result)}>
                           Click for Instructions
                         </strong>

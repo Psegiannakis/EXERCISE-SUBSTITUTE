@@ -3,7 +3,7 @@
 <h3>To Run:</h3>
 <ul>
   <li>npm run dev</li>
-   <li>or visit site: https://exercise-substitute.netlify.app//</li>
+   <li>site: https://exercise-substitute.netlify.app///</li>
  
   
 </ul>
